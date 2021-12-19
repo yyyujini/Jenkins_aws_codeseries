@@ -68,7 +68,7 @@ pipeline {
     
     // stage('Prompt for deploy') {
     //     steps {
-    //       // input 'Deploy this ??'
+    //       // input 'Deploy this ???'
     //       script {
     //         env.APPROAL_NUM = input message: 'Please enter the approval number',
     //                          parameters: [string(defaultValue: '',
