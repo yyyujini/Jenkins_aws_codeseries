@@ -48,21 +48,21 @@ pipeline {
         }
     }
 
-    stage('============ Deploy workload ============') {
-        when { expression { return params.DEPLOY_WORKLOAD } }
-       // agent { label 'deploy' }
-        steps {
-            sshagent (credentials: ['aws-ec2-user-ssh']) {
-                sh """#!/bin/bash
-                    ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-                        ${params.TARGET_SVR_USER}@${params.TARGET_SVR} \
-                        'aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}; \
-                         docker rm -f ${CONTAINER_NAME};
-                         docker run -d -p 80:80 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}';
-                """
-            }
-        }
-    }
+    // stage('============ Deploy workload ============') {
+    //     when { expression { return params.DEPLOY_WORKLOAD } }
+    //    // agent { label 'deploy' }
+    //     steps {
+    //         sshagent (credentials: ['aws-ec2-user-ssh']) {
+    //             sh """#!/bin/bash
+    //                 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+    //                     ${params.TARGET_SVR_USER}@${params.TARGET_SVR} \
+    //                     'aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}; \
+    //                      docker rm -f ${CONTAINER_NAME};
+    //                      docker run -d -p 80:80 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}';
+    //             """
+    //         }
+    //     }
+    // }
 
 
     
