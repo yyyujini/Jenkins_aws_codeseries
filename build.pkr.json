@@ -1,0 +1,36 @@
+{  
+    "builders":[
+      {
+        "type": "docker",
+        "image": "nginx",
+        "commit": true,
+        "run_command": ["-d", "{{.Image}}", "nginx -g daemon off"]
+      }
+    ],
+    "provisioners":[
+      {
+        "type": "shell",
+        "inline": [
+          "echo test > /tmp/test.html"
+        ]
+      },
+      {
+        "type": "file",
+        "source": "index.html",
+        "destination": "/tmp/index.html"
+      }
+        
+    ],
+  
+    "post-processors": [
+      [
+        {
+          "type": "docker-tag",
+          "repository": "my-nginx",
+          "tag": "0.1"
+        }
+      ]
+    ]
+  }
+  
+  
