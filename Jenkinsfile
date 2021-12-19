@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent { label 'master' }
 
   parameters {
     booleanParam(name : 'BUILD_DOCKER_IMAGE', defaultValue : true, description : 'BUILD_DOCKER_IMAGE')
@@ -24,8 +24,8 @@ pipeline {
     DOCKER_IMAGE = "${ECR_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_TAG}"
     CONTAINER_NAME = "web-demo"
 
-    CODEBUILD_NAME = "jenkins-aws-codebuild-dc"
-    CODEBUILD_ARTIFACT_S3_NAME = "jenkins-s3-artifacts-codebuild-dc"
+    CODEBUILD_NAME = "jenkins-codebuild-"
+    CODEBUILD_ARTIFACT_S3_NAME = "jenkins-s3-codebuild-yj"
     CODEBUILD_ARTIFACT_S3_KEY = "${currentBuild.number}/${CODEBUILD_NAME}"
     CODEDEPLOY_NAME = "jenkins-slave-codedeploy-test"
     CODEDEPLOY_GROUP_NAME = "jenkins-slave-codedeploy-group"
@@ -33,36 +33,18 @@ pipeline {
   }
 
   stages {
-    stage('============ Build Docker Image ============') {
-        when {expression { return params.BUILD_DOCKER_IMAGE }}
+    stage('============ AWS CodeBuild Docker Image ============') {
+      when { expression { return params.BUILD_DOCKER_IMAGE } }
+        agent { label 'master' }
         steps {
-            dir("${env.WORKSPACE}"){
-              sh 'docker build -t ${DOCKER_IMAGE} .'
-            }
-        }
-        post {
-            always {
-                echo "Docker Build Success!"
-            }
-        }
-    }
-
-    stage('============ Run test code ============') {
-        when { expression { return params.RUN_TEST } }
-        steps {
-            echo "Stage Test!"
-        }
-    }
-
-        stage('============ Push Docker Image ============') {
-        when { expression { return params.PUSH_DOCKER_IMAGE } }
-        steps {
-            echo "Push Docker Image to ECR!"
-            echo "${ECR_REPOSITORY}"
-            sh'''
-                aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
-                docker push ${DOCKER_IMAGE}
-            '''
+            awsCodeBuild(
+              credentialsType: 'keys',
+              region: "${REGION}",
+              projectName: "${CODEBUILD_NAME}",
+              sourceControlType: 'jenkins',
+              sseAlgorithm: 'AES256',
+              buildSpecFile: "buildspec.yml"
+            )
         }
     }
 
