@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REGION="ap-northeast-2"
-ACCOUNT_ID="612545637826"
+ACCOUNT_ID="917466992560"
 ECR_REPOSITORY="${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com"
 ECR_DOCKER_IMAGE="${ECR_REPOSITORY}/test"
 ECR_DOCKER_TAG="1"
