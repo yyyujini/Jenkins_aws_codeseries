@@ -33,7 +33,7 @@ pipeline {
   }
 
   stages {
-    stage('============ AWS CodeBuild Docker Image ============') {
+    stage('============ AWS CodeBuild Docker Image ===+=========') {
       when { expression { return params.BUILD_DOCKER_IMAGE } }
         agent { label 'master' }
         steps {
